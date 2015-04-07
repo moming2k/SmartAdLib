@@ -26,4 +26,4 @@ Chris Chan, chrischan@igpsd.com
 
 ## License
 
-SmartAdLib is available under the MIT license. See the LICENSE file for more info.
+SmartAdLib is available under the GPL Version 3 license. See the LICENSE file for more info.
