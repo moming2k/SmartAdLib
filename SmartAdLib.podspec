@@ -9,20 +9,18 @@
 
 Pod::Spec.new do |s|
   s.name             = "SmartAdLib"
-  s.version          = "0.1.0"
-  s.summary          = "A short description of SmartAdLib."
+  s.version          = "1.1.0"
+  s.summary          = "Bluetooth iBeacon Advertisement and Analysis Library."
   s.description      = <<-DESC
-                       An optional longer description of SmartAdLib
+                       SmartAd Provide the easiest developer friendly iBeacon Advertisement system. We provide both back and front end for your development.
 
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
                        DESC
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/SmartAdLib"
+  s.homepage         = "http://www.igpsd.com"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Chris Chan" => "chrischan@igpsd.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/SmartAdLib.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => "https://github.com/moming2k/SmartAdLib.git", :tag => s.version.to_s }
+  # s.social_media_url = 'https://twitter.com/moming2k'
 
   s.platform     = :ios, '7.0'
   s.requires_arc = true
