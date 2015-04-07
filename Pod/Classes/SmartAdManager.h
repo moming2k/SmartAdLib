@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SADRequest.h"
+#import "SADBannerView.h"
+
 @interface SmartAdManager : NSObject
+
 
 @end

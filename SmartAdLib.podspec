@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
                        DESC
   s.homepage         = "http://www.igpsd.com"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
-  s.license          = 'MIT'
+  s.license          = { "type" => "Copyright", "text" => "Copyright 2011 IGPSD Ltd Inc. All Rights Reserved." }
   s.author           = { "Chris Chan" => "chrischan@igpsd.com" }
   s.source           = { :git => "https://github.com/moming2k/SmartAdLib.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/moming2k'
@@ -31,6 +31,7 @@ Pod::Spec.new do |s|
   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.frameworks =  'AudioToolbox', 'AVFoundation', 'CoreGraphics', 'CoreMedia', 'CoreTelephony', 'EventKit', 'EventKitUI', 'MessageUI', 'StoreKit', 'SystemConfiguration', 'CoreBluetooth', 'CoreLocation'
+
+  s.dependency 'AFNetworking', '~> 2.0'
 end

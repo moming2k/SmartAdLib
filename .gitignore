@@ -30,3 +30,29 @@ DerivedData
 # `pod install` in .travis.yml
 #
 # Pods/
+Example/Pods/AFNetworking
+Example/Pods/Headers/Private/AFNetworking
+Example/Pods/Headers/Private/SmartAdLib
+Example/Pods/Headers/Public/AFNetworking
+Example/Pods/Headers/Public/SmartAdLib
+Example/Pods/Local Podspecs/SmartAdLib.podspec.json
+Example/Pods/Manifest.lock
+Example/Pods/Pods.xcodeproj/project.pbxproj
+Example/Pods/Target Support Files/Pods-SmartAdLib-AFNetworking
+Example/Pods/Target Support Files/Pods-SmartAdLib-SmartAdLib
+Example/Pods/Target Support Files/Pods-SmartAdLib/Pods-SmartAdLib-acknowledgements.markdown
+Example/Pods/Target Support Files/Pods-SmartAdLib/Pods-SmartAdLib-acknowledgements.plist
+Example/Pods/Target Support Files/Pods-SmartAdLib/Pods-SmartAdLib-environment.h
+Example/Pods/Target Support Files/Pods-SmartAdLib/Pods-SmartAdLib.debug.xcconfig
+Example/Pods/Target Support Files/Pods-SmartAdLib/Pods-SmartAdLib.release.xcconfig
+Example/Pods/Target Support Files/Pods-Tests-AFNetworking
+Example/Pods/Target Support Files/Pods-Tests-Expecta/Pods-Tests-Expecta-Private.xcconfig
+Example/Pods/Target Support Files/Pods-Tests-Expecta+Snapshots/Pods-Tests-Expecta+Snapshots-Private.xcconfig
+Example/Pods/Target Support Files/Pods-Tests-FBSnapshotTestCase/Pods-Tests-FBSnapshotTestCase-Private.xcconfig
+Example/Pods/Target Support Files/Pods-Tests-SmartAdLib
+Example/Pods/Target Support Files/Pods-Tests-Specta/Pods-Tests-Specta-Private.xcconfig
+Example/Pods/Target Support Files/Pods-Tests/Pods-Tests-acknowledgements.markdown
+Example/Pods/Target Support Files/Pods-Tests/Pods-Tests-acknowledgements.plist
+Example/Pods/Target Support Files/Pods-Tests/Pods-Tests-environment.h
+Example/Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig
+Example/Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig
