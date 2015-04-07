@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  s.frameworks =  'AudioToolbox', 'AVFoundation', 'CoreGraphics', 'CoreMedia', 'CoreTelephony', 'EventKit', 'EventKitUI', 'MessageUI', 'StoreKit', 'SystemConfiguration', 'CoreBluetooth', 'CoreLocation'
+  s.frameworks =  'AudioToolbox', 'AVFoundation', 'CoreGraphics', 'CoreMedia', 'CoreTelephony', 'EventKit', 'EventKitUI', 'MessageUI', 'StoreKit', 'SystemConfiguration', 'CoreBluetooth', 'CoreLocation', 'AdSupport'
 
   s.dependency 'AFNetworking', '~> 2.0'
 end

@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SmartAdManager.h"
 
 @interface SAViewController : UIViewController
+
+@property(nonatomic, strong) SADInterstitial *interstitial;
 
 @end

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-//#import "SADInterstitialDelegate.h"
+#import "SADInterstitialDelegate.h"
 #import "SADRequest.h"
 
 @interface SADInterstitial : NSObject
@@ -22,7 +22,7 @@
 
 /// Optional delegate object that receives state change notifications from this GADInterstitalAd.
 /// Remember to nil this property before deallocating the delegate.
-//@property(nonatomic, weak) id<SADInterstitialDelegate> delegate;
+@property(nonatomic, weak) id<SADInterstitialDelegate> delegate;
 
 #pragma mark Making an Ad Request
 
@@ -58,6 +58,6 @@
 /// application does not use view controllers pass in nil and your views will be removed from the
 /// window to show the interstitial and restored when done. After the interstitial has been removed,
 /// the delegate's interstitialDidDismissScreen: will be called.
-- (void)presentFromRootViewController:(UIViewController *)rootViewController;
+//- (void)presentFromRootViewController:(UIViewController *)rootViewController;
 
 @end

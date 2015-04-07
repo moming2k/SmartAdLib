@@ -34,15 +34,17 @@ typedef NS_ENUM(NSInteger, SADGender) {
 /// Provide the user's gender to increase ad relevancy.
 @property(nonatomic, assign) SADGender gender;
 
+@property(nonatomic, assign) int age;
+
 /// Provide the user's birthday to increase ad relevancy.
 @property(nonatomic, copy) NSDate *birthday;
 
 /// The user's current location may be used to deliver more relevant ads. However do not use Core
 /// Location just for advertising, make sure it is used for more beneficial reasons as well. It is
 /// both a good idea and part of Apple's guidelines.
-- (void)setLocationWithLatitude:(CGFloat)latitude
-                      longitude:(CGFloat)longitude
-                       accuracy:(CGFloat)accuracyInMeters;
+//- (void)setLocationWithLatitude:(CGFloat)latitude
+//                      longitude:(CGFloat)longitude
+//                       accuracy:(CGFloat)accuracyInMeters;
 
 /// When Core Location isn't available but the user's location is known supplying it here may
 /// deliver more relevant ads. It can be any free-form text such as @"Champs-Elysees Paris" or
