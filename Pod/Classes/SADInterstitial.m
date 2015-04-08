@@ -16,6 +16,7 @@
 
 - (void)loadRequest:(SADRequest *)request
 {
+    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSMutableDictionary *parameters =
     [NSMutableDictionary dictionaryWithDictionary:@{@"foo": @"bar"}];

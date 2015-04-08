@@ -13,11 +13,16 @@
 #import "SADInterstitial.h"
 #import "SADInterstitialDelegate.h"
 
+@import CoreLocation;
+
 @interface SmartAdManager : NSObject
 
 @property(nonatomic, copy) NSString *adUnitID;
+@property(nonatomic, readonly) BOOL isMonitoring;
+@property(nonatomic, readonly) BOOL isRanging;
 
 +(id)sharedInstance;
 - (void)handleLocalNotification:(UILocalNotification *)notification;
+- (void)sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:(NSString*) message;
 
 @end

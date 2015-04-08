@@ -11,6 +11,14 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
+
+Add the follow key in plist file for the Always use of the Location in background mode
+
+```plist
+<key>NSLocationAlwaysUsageDescription</key>
+<string>Support for offline access of Coupon</string>
+```
+
 ## Installation
 
 SmartAdLib is available through [CocoaPods](http://cocoapods.org). To install

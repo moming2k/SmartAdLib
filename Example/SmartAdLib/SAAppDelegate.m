@@ -14,12 +14,17 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    SmartAdManager *smartAdManager =[SmartAdManager sharedInstance] ;
+    SmartAdManager *smartAdManager = [SmartAdManager sharedInstance] ;
     [smartAdManager setAdUnitID:@"ctbcapp01"];
+    
+    /* prepare for the handle of the local notification if it is not already ask user by other place */
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    }
     
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     
@@ -53,7 +58,6 @@
 {
     // If the application is in the foreground, we will notify the user of the region's state via an alert.
     [[SmartAdManager sharedInstance] handleLocalNotification:notification];
-    
     
 }
 

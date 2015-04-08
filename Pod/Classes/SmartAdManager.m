@@ -7,7 +7,25 @@
 //
 
 #import "SmartAdManager.h"
-@import CoreLocation;
+static NSString * const kIdentifier = @"SomeIdentifier";
+
+static NSString * const kOperationCellIdentifier = @"OperationCell";
+static NSString * const kBeaconCellIdentifier = @"BeaconCell";
+
+static NSString * const kMonitoringOperationTitle = @"Monitoring";
+static NSString * const kAdvertisingOperationTitle = @"Advertising";
+static NSString * const kRangingOperationTitle = @"Ranging";
+static NSUInteger const kNumberOfSections = 2;
+static NSUInteger const kNumberOfAvailableOperations = 3;
+static CGFloat const kOperationCellHeight = 44;
+static CGFloat const kBeaconCellHeight = 52;
+static NSString * const kBeaconSectionTitle = @"Looking for beacons...";
+static CGPoint const kActivityIndicatorPosition = (CGPoint){205, 12};
+static NSString * const kBeaconsHeaderViewIdentifier = @"BeaconsHeader";
+
+static void * const kMonitoringOperationContext = (void *)&kMonitoringOperationContext;
+static void * const kRangingOperationContext = (void *)&kRangingOperationContext;
+
 
 NSString *BeaconIdentifier = @"com.igpsd.smartad";
 
@@ -20,6 +38,8 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 @property BOOL notifyOnEntry;
 @property BOOL notifyOnExit;
 @property BOOL notifyOnDisplay;
+@property (nonatomic, unsafe_unretained) void *operationContext;
+
 @end
 
 
@@ -41,12 +61,16 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 
 - (id)init {
     if (self = [super init]) {
+        _isMonitoring = NO;
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
+        
         
         NSArray *_supportedProximityUUIDs = @[[[NSUUID alloc] initWithUUIDString:@"E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"],
                                      [[NSUUID alloc] initWithUUIDString:@"5A4BCFCE-174E-4BAC-A814-092E77F6B7E5"],
                                      [[NSUUID alloc] initWithUUIDString:@"74278BDA-B644-4520-8F0C-720EAF059935"]];
+        
+        [self checkLocationAccessForRanging];
         
         CLBeaconRegion *region = [[CLBeaconRegion alloc] initWithProximityUUID:_supportedProximityUUIDs[0] identifier:BeaconIdentifier];
         self.notifyOnEntry = self.notifyOnExit = self.notifyOnDisplay = YES;
@@ -54,6 +78,62 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 
     }
     return self;
+}
+
+#pragma mark - Location access methods (iOS8/Xcode6)
+- (void)checkLocationAccessForRanging {
+    if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+        [self.locationManager requestAlwaysAuthorization];
+    }
+}
+
+#pragma mark - Location manager delegate methods
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (![CLLocationManager locationServicesEnabled]) {
+        if (self.operationContext == kMonitoringOperationContext) {
+            NSLog(@"Couldn't turn on monitoring: Location services are not enabled.");
+            //self.monitoringSwitch.on = NO;
+            return;
+        } else {
+            NSLog(@"Couldn't turn on ranging: Location services are not enabled.");
+            //self.rangingSwitch.on = NO;
+            return;
+        }
+    }
+    
+    CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
+    switch (authorizationStatus) {
+        case kCLAuthorizationStatusAuthorizedAlways:
+            if (self.operationContext == kMonitoringOperationContext) {
+                _isMonitoring = YES;
+            } else {
+                _isMonitoring = YES;
+                _isRanging = YES;
+            }
+            return;
+            
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            if (self.operationContext == kMonitoringOperationContext) {
+                NSLog(@"Couldn't turn on monitoring: Required Location Access(Always) missing.");
+                _isMonitoring = NO;
+            } else {
+                _isRanging = YES;
+            }
+            return;
+            
+        default:
+            if (self.operationContext == kMonitoringOperationContext) {
+                NSLog(@"Couldn't turn on monitoring: Required Location Access(Always) missing.");
+                _isMonitoring = NO;
+                return;
+            } else {
+                NSLog(@"Couldn't turn on monitoring: Required Location Access(WhenInUse) missing.");
+                _isRanging = NO;
+                return;
+            }
+            break;
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region
@@ -65,10 +145,12 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
     
     if(state == CLRegionStateInside)
     {
+        notification.alertTitle = @"Region Event";
         notification.alertBody = NSLocalizedString(@"You're inside the region", @"");
     }
     else if(state == CLRegionStateOutside)
     {
+        notification.alertTitle = @"Region Event";
         notification.alertBody = NSLocalizedString(@"You're outside the region", @"");
     }
     else
@@ -80,6 +162,42 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
      If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
      If it's not, iOS will display the notification to the user.
      */
+    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+}
+
+- (void)locationManager:(CLLocationManager *)manager
+        didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region
+{
+    NSLog(@"didRangeBeacons");
+}
+
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
+{
+    NSLog(@"Entered region: %@", region);
+    CLBeaconRegion *bRegion = (CLBeaconRegion*) region;
+    [self sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:[NSString stringWithFormat:@"Entered beacon region for UUID: %@",
+                                                                                     bRegion.proximityUUID.UUIDString]];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
+{
+    NSLog(@"Exited region: %@", region);
+    CLBeaconRegion *bRegion = (CLBeaconRegion*) region;
+    [self sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:[NSString stringWithFormat:@"Exited beacon region for UUID: %@",
+                                                                                     bRegion.proximityUUID.UUIDString]];
+}
+
+#pragma mark - Local notifications
+- (void)sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:(NSString*) message
+{
+    UILocalNotification *notification = [UILocalNotification new];
+    
+    // Notification details
+    notification.alertBody = @"Beacon 狀態更新";
+    notification.alertBody = message;   // Major and minor are not available at the monitoring stage
+    notification.alertAction = NSLocalizedString(@"View Details", nil);
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    
     [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
 }
 
