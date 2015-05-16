@@ -8,11 +8,13 @@
 
 #import "SAAppDelegate.h"
 #import "SmartAdManager.h"
+#import "AFNetworking.h"
 
 @implementation SAAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    isNotificaion = NO;
     // Override point for customization after application launch.
     SmartAdManager *smartAdManager = [SmartAdManager sharedInstance] ;
     [smartAdManager setAdUnitID:@"ctbcapp01"];
@@ -22,11 +24,21 @@
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
     
+    UILocalNotification *localNotification = launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
+    if (localNotification)
+    {
+         isNotificaion = YES;
+        
+       
+    }
+
+    
     return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    
     
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -40,6 +52,44 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+    if (isNotificaion)
+    {
+        isNotificaion = NO;
+        
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        securityPolicy.allowInvalidCertificates = YES;
+        
+        AFHTTPRequestOperationManager *afmanager = [AFHTTPRequestOperationManager manager];
+        //    manager.securityPolicy = securityPolicy;
+        
+        afmanager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+        [afmanager POST:@"http://shisa.igpsd.com/ad_requests.json" parameters:
+         @{
+           @"gender":@"M",
+           @"age": @"26",
+           
+           }
+                success:^(AFHTTPRequestOperation *operation, id responseObject)
+         {
+             NSArray *array = (NSArray*) responseObject;
+             
+             if ([array count] > 0)
+             {
+                 
+                 NSDictionary *dict = [array objectAtIndex:0];
+                 
+                 if ( [[dict objectForKey:@"match"] boolValue])
+                 {
+                     NSURL *url = [NSURL URLWithString:[dict objectForKey:@"ad_url"]];
+                     [[UIApplication sharedApplication] openURL:url];
+                 }
+             }
+             
+         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+             NSLog(@"Error: %@", error);
+         }];
+        
+    }
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
@@ -47,6 +97,7 @@
 {
     
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

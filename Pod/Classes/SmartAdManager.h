@@ -15,7 +15,10 @@
 
 @import CoreLocation;
 
-@interface SmartAdManager : NSObject
+@interface SmartAdManager : NSObject < UIAlertViewDelegate >
+{
+    NSString *link;
+}
 
 @property(nonatomic, copy) NSString *adUnitID;
 @property(nonatomic, readonly) BOOL isMonitoring;
@@ -24,5 +27,7 @@
 +(id)sharedInstance;
 - (void)handleLocalNotification:(UILocalNotification *)notification;
 - (void)sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:(NSString*) message;
+
+- (void)goToLink;
 
 @end

@@ -7,6 +7,8 @@
 //
 
 #import "SmartAdManager.h"
+#import "AFNetworking.h"
+
 static NSString * const kIdentifier = @"SomeIdentifier";
 
 static NSString * const kOperationCellIdentifier = @"OperationCell";
@@ -68,7 +70,8 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         
         NSArray *_supportedProximityUUIDs = @[[[NSUUID alloc] initWithUUIDString:@"E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"],
                                      [[NSUUID alloc] initWithUUIDString:@"5A4BCFCE-174E-4BAC-A814-092E77F6B7E5"],
-                                     [[NSUUID alloc] initWithUUIDString:@"74278BDA-B644-4520-8F0C-720EAF059935"]];
+                                     [[NSUUID alloc] initWithUUIDString:@"74278BDA-B644-4520-8F0C-720EAF059935"],
+                                     [[NSUUID alloc] initWithUUIDString:@"D988B3E4-1830-4B0C-B47F-81CF2F2C906F"]];
         
         [self checkLocationAccessForRanging];
         
@@ -152,17 +155,62 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
     {
         notification.alertTitle = @"Region Event";
         notification.alertBody = NSLocalizedString(@"You're outside the region", @"");
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        return;
     }
     else
     {
         return;
     }
     
+    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    securityPolicy.allowInvalidCertificates = YES;
+    
+    AFHTTPRequestOperationManager *afmanager = [AFHTTPRequestOperationManager manager];
+    //    manager.securityPolicy = securityPolicy;
+    
+    afmanager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    [afmanager POST:@"http://shisa.igpsd.com/ad_requests.json" parameters:
+     @{
+       @"gender":@"M",
+       @"age": @"26",
+       
+       }
+            success:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         NSArray *array = (NSArray*) responseObject;
+         
+         if ([array count] > 0)
+         {
+             
+             NSDictionary *dict = [array objectAtIndex:0];
+             
+             if([[dict objectForKey:@"match"] boolValue])
+             {
+                 notification.alertTitle = [dict objectForKey:@"title"];
+                 notification.alertBody = [dict objectForKey:@"ad_content"];
+                 
+                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+             }
+             else
+             {
+                 notification.alertTitle = @"Not Match";
+                 notification.alertBody = @"";
+                 
+                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+             }
+         }
+         
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         NSLog(@"Error: %@", error);
+     }];
+
+    
     /*
      If the application is in the foreground, it will get a callback to application:didReceiveLocalNotification:.
      If it's not, iOS will display the notification to the user.
      */
-    [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -175,8 +223,51 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 {
     NSLog(@"Entered region: %@", region);
     CLBeaconRegion *bRegion = (CLBeaconRegion*) region;
-    [self sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:[NSString stringWithFormat:@"Entered beacon region for UUID: %@",
-                                                                                     bRegion.proximityUUID.UUIDString]];
+    
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    
+    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    securityPolicy.allowInvalidCertificates = YES;
+    
+    AFHTTPRequestOperationManager *afmanager = [AFHTTPRequestOperationManager manager];
+    //    manager.securityPolicy = securityPolicy;
+    
+    afmanager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    [afmanager POST:@"http://shisa.igpsd.com/ad_requests.json" parameters:
+     @{
+       @"gender":@"M",
+       @"age": @"26",
+       
+       }
+            success:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         NSArray *array = (NSArray*) responseObject;
+         
+         if ([array count] > 0)
+         {
+             
+             NSDictionary *dict = [array objectAtIndex:0];
+             
+             if([[dict objectForKey:@"match"] boolValue])
+             {
+                 notification.alertTitle = [dict objectForKey:@"title"];
+                 notification.alertBody = [dict objectForKey:@"ad_content"];
+                 
+                 link = [dict objectForKey:@"ad_url"];
+                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+             }
+             else
+             {
+                 notification.alertTitle = @"Not Match";
+                 notification.alertBody = @"";
+                 
+                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+             }
+         }
+         
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         NSLog(@"Error: %@", error);
+     }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
@@ -203,11 +294,79 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 
 - (void)handleLocalNotification:(UILocalNotification *)notification
 {
-    NSString *cancelButtonTitle = NSLocalizedString(@"OK", @"Title for cancel button in local notification");
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:notification.alertBody message:nil delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
-    [alert show];
+    if ([notification.alertBody isEqualToString:@""])
+    {
+        NSString *cancelButtonTitle = NSLocalizedString(@"OK", @"Title for cancel button in local notification");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:notification.alertTitle message:notification.alertBody delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+        [alert show];
+    }
+    else
+    {
+        NSString *cancelButtonTitle = NSLocalizedString(@"OK", @"Title for cancel button in local notification");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:notification.alertTitle message:notification.alertBody delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:@"前往",nil];
+        [alert show];
+        
+    }
 }
 
+- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    switch (buttonIndex) {
+        case 0:
+            NSLog(@"Cancel Button Pressed");
+            break;
+        case 1:
+            [self goToLink];
+            break;
+        case 2:
+            NSLog(@"Button 2 Pressed");
+            break;
+        case 3:
+            NSLog(@"Button 3 Pressed");
+            break;
+        default:
+            break;
+    }
+    
+}
+
+- (void)goToLink
+{
+    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    securityPolicy.allowInvalidCertificates = YES;
+    
+    AFHTTPRequestOperationManager *afmanager = [AFHTTPRequestOperationManager manager];
+    //    manager.securityPolicy = securityPolicy;
+    
+    afmanager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    [afmanager POST:@"http://shisa.igpsd.com/ad_requests.json" parameters:
+     @{
+       @"gender":@"M",
+       @"age": @"26",
+       
+       }
+            success:^(AFHTTPRequestOperation *operation, id responseObject)
+     {
+         NSArray *array = (NSArray*) responseObject;
+         
+         if ([array count] > 0)
+         {
+             
+             NSDictionary *dict = [array objectAtIndex:0];
+             
+             if([[dict objectForKey:@"match"] boolValue])
+             {
+                 link = [dict objectForKey:@"ad_url"];
+                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:link]];
+             }
+             
+         }
+         
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         NSLog(@"Error: %@", error);
+     }];
+
+}
 
 - (void)dealloc {
     //The dealloc must not

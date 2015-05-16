@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface SAAppDelegate : UIResponder <UIApplicationDelegate>
+{
+    BOOL isNotificaion;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
