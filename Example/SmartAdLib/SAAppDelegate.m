@@ -17,7 +17,7 @@
 {
     isNotificaion = NO;
     
-//    [Tolo.sharedInstance subscribe:self];
+    [Tolo.sharedInstance subscribe:self];
     
     // Override point for customization after application launch.
     SmartAdManager *smartAdManager = [SmartAdManager sharedInstance];
@@ -36,6 +36,13 @@
 
     
     return YES;
+}
+
+SUBSCRIBE(SADManagerEvent)
+{
+    NSLog(@"SADEvent event message = %@",event.message);
+//    self.progressView.progress = event.progress;
+//    self.label.text = [NSString stringWithFormat:@"%0.2f",event.progress];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

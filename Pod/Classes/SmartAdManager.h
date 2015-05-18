@@ -13,13 +13,16 @@
 #import "SADInterstitial.h"
 #import "SADInterstitialDelegate.h"
 #import "Tolo.h"
-#import "SADEvent.h"
+#import "SADManagerEvent.h"
+#import "SADPromotionEvent.h"
+#import "SADLocationEvent.h"
 
 @import CoreLocation;
 
 @interface SmartAdManager : NSObject < UIAlertViewDelegate >
 {
     NSString *link;
+    NSString *token;
 }
 
 @property(nonatomic, copy) NSString *adUnitID;
@@ -29,6 +32,7 @@
 +(id)sharedInstance;
 - (void)handleLocalNotification:(UILocalNotification *)notification;
 - (void)sendLocalNotificationForBeaconRegion:(CLBeaconRegion *)region withMessage:(NSString*) message;
+- (void)setUserToken:(NSString *)token;
 
 - (void)goToLink;
 

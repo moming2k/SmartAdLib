@@ -63,6 +63,11 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
     return sharedMyManager;
 }
 
+- (void)setUserToken:(NSString *)_token
+{
+    token = [_token copy];
+}
+
 - (id)init {
     if (self = [super init]) {
         _isMonitoring = NO;
@@ -78,11 +83,11 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         
         [self checkLocationAccessForRanging];
         
-        CLBeaconRegion *region = [[CLBeaconRegion alloc] initWithProximityUUID:_supportedProximityUUIDs[0] identifier:BeaconIdentifier];
+        CLBeaconRegion *region = [[CLBeaconRegion alloc] initWithProximityUUID:_supportedProximityUUIDs[3] identifier:BeaconIdentifier];
         self.notifyOnEntry = self.notifyOnExit = self.notifyOnDisplay = YES;
         [self.locationManager startMonitoringForRegion:region];
         
-        SADEvent *event = [SADEvent new];
+        SADManagerEvent *event = [SADManagerEvent new];
         event.message = @"SADManager started";
         event.status = @"success";
         
@@ -191,23 +196,52 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
          
          if ([array count] > 0)
          {
-             
-             NSDictionary *dict = [array objectAtIndex:0];
-             
-             if([[dict objectForKey:@"match"] boolValue])
-             {
-                 notification.alertTitle = [dict objectForKey:@"title"];
-                 notification.alertBody = [dict objectForKey:@"ad_content"];
-                 
-                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+             for (NSDictionary *dict in array) {
+                 if([[dict objectForKey:@"match"] boolValue])
+                 { NSDictionary *dict = [array objectAtIndex:0];
+                     
+                     NSMutableDictionary *data_info = [[NSMutableDictionary alloc] initWithCapacity:0];
+                     [data_info setObject:@"" forKey:@"push_message_id"];
+                     [data_info setObject:[NSNumber numberWithInt:1] forKey:@"tab"];
+                     
+                     if([dict objectForKey:@"store_id"] && [[dict objectForKey:@"store_id"] isKindOfClass:[NSString class]])
+                     {
+                         [data_info setObject:[dict objectForKey:@"store_id"] forKey:@"store"];
+
+                     }
+                     if([dict objectForKey:@"action"])
+                     {
+                         [data_info setObject:[dict objectForKey:@"action"] forKey:@"action"];
+                     }
+                     else
+                     {
+                         [data_info setObject:@"Popup" forKey:@"action"];
+                     }
+                     [data_info setObject:[dict objectForKey:@"link"] forKey:@"url"];
+                     [data_info setObject:[dict objectForKey:@"image_url"] forKey:@"image"];
+                     [data_info setObject:[dict objectForKey:@"title"] forKey:@"title"];
+                     [data_info setObject:[dict objectForKey:@"remark"] forKey:@"content"];
+                     [data_info setObject:[dict objectForKey:@"start_at"] forKey:@"start_at"];
+                     [data_info setObject:[dict objectForKey:@"end_at"] forKey:@"end_at"];
+                     
+                     
+                     notification.alertTitle = [dict objectForKey:@"title"];
+                     notification.alertBody = [dict objectForKey:@"ad_content"];
+                     notification.userInfo = data_info;
+                     
+                     SADPromotionEvent *event = [SADPromotionEvent new];
+                     event.message = @"Local Push Message";
+                     event.status = @"success";
+                     event.data_info = data_info;
+                     
+                     [Tolo.sharedInstance publish:event];
+                     
+                     
+                     [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+                     break;
+                 }
              }
-             else
-             {
-                 notification.alertTitle = @"Not Match";
-                 notification.alertBody = @"";
-                 
-                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-             }
+            
          }
          
      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
