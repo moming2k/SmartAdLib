@@ -10,13 +10,17 @@
 #import "SmartAdManager.h"
 #import "AFNetworking.h"
 
+
 @implementation SAAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     isNotificaion = NO;
+    
+//    [Tolo.sharedInstance subscribe:self];
+    
     // Override point for customization after application launch.
-    SmartAdManager *smartAdManager = [SmartAdManager sharedInstance] ;
+    SmartAdManager *smartAdManager = [SmartAdManager sharedInstance];
     [smartAdManager setAdUnitID:@"ctbcapp01"];
     
     /* prepare for the handle of the local notification if it is not already ask user by other place */
@@ -28,8 +32,6 @@
     if (localNotification)
     {
          isNotificaion = YES;
-        
-       
     }
 
     

@@ -8,6 +8,8 @@
 
 #import "SmartAdManager.h"
 #import "AFNetworking.h"
+//#import "Tolo.h"
+
 
 static NSString * const kIdentifier = @"SomeIdentifier";
 
@@ -67,6 +69,7 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
         
+        [Tolo.sharedInstance subscribe:self];
         
         NSArray *_supportedProximityUUIDs = @[[[NSUUID alloc] initWithUUIDString:@"E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"],
                                      [[NSUUID alloc] initWithUUIDString:@"5A4BCFCE-174E-4BAC-A814-092E77F6B7E5"],
@@ -78,6 +81,12 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         CLBeaconRegion *region = [[CLBeaconRegion alloc] initWithProximityUUID:_supportedProximityUUIDs[0] identifier:BeaconIdentifier];
         self.notifyOnEntry = self.notifyOnExit = self.notifyOnDisplay = YES;
         [self.locationManager startMonitoringForRegion:region];
+        
+        SADEvent *event = [SADEvent new];
+        event.message = @"SADManager started";
+        event.status = @"success";
+        
+        [Tolo.sharedInstance publish:event];
 
     }
     return self;
