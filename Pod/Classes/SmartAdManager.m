@@ -17,12 +17,12 @@ static NSString * const kBeaconCellIdentifier = @"BeaconCell";
 static NSString * const kMonitoringOperationTitle = @"Monitoring";
 static NSString * const kAdvertisingOperationTitle = @"Advertising";
 static NSString * const kRangingOperationTitle = @"Ranging";
-static NSUInteger const kNumberOfSections = 2;
-static NSUInteger const kNumberOfAvailableOperations = 3;
-static CGFloat const kOperationCellHeight = 44;
-static CGFloat const kBeaconCellHeight = 52;
+//static NSUInteger const kNumberOfSections = 2;
+//static NSUInteger const kNumberOfAvailableOperations = 3;
+//static CGFloat const kOperationCellHeight = 44;
+//static CGFloat const kBeaconCellHeight = 52;
 static NSString * const kBeaconSectionTitle = @"Looking for beacons...";
-static CGPoint const kActivityIndicatorPosition = (CGPoint){205, 12};
+//static CGPoint const kActivityIndicatorPosition = (CGPoint){205, 12};
 static NSString * const kBeaconsHeaderViewIdentifier = @"BeaconsHeader";
 
 static void * const kMonitoringOperationContext = (void *)&kMonitoringOperationContext;
@@ -222,7 +222,7 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
 {
     NSLog(@"Entered region: %@", region);
-    CLBeaconRegion *bRegion = (CLBeaconRegion*) region;
+//    CLBeaconRegion *bRegion = (CLBeaconRegion*) region;
     
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     
@@ -305,7 +305,6 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         NSString *cancelButtonTitle = NSLocalizedString(@"OK", @"Title for cancel button in local notification");
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:notification.alertTitle message:notification.alertBody delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:@"前往",nil];
         [alert show];
-        
     }
 }
 
