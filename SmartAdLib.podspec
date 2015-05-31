@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "SmartAdLib"
-  s.version          = "1.1.5"
+  s.version          = "1.1.6"
   s.summary          = "Bluetooth iBeacon Advertisement and Analysis Library."
   s.description      = <<-DESC
                        SmartAd Provide the easiest developer friendly iBeacon Advertisement system. We provide both back and front end for your development.
