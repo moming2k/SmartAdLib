@@ -92,10 +92,38 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         event.status = @"success";
         
         [Tolo.sharedInstance publish:event];
+        
+        SADLocationEvent *location = [[SADLocationEvent alloc] init];
+        location.status = @"success";
+        location.message = @"Load Success";
+        
+        location.floor = @1;
+        location.block = @"N";
+        location.x = @28.231565;
+        location.y = @117.52723;
+        
+        [Tolo.sharedInstance publish:location];
+        
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
 
     }
     return self;
 }
+
+- (void)timerFired
+{
+    SADLocationEvent *location = [[SADLocationEvent alloc] init];
+    location.status = @"success";
+    location.message = @"Load Success";
+    
+    location.floor = @1;
+    location.block = @"N";
+    location.x = @28.231565;
+    location.y = @117.52723;
+    
+    [Tolo.sharedInstance publish:location];
+}
+
 
 #pragma mark - Location access methods (iOS8/Xcode6)
 - (void)checkLocationAccessForRanging {
@@ -349,6 +377,20 @@ NSString *BeaconIdentifier = @"com.igpsd.smartad";
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:notification.alertTitle message:notification.alertBody delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:@"前往",nil];
         [alert show];
     }
+}
+
+- (SADLocationEvent*) currentLocation
+{
+    SADLocationEvent *location = [[SADLocationEvent alloc] init];
+    location.status = @"success";
+    location.message = @"Load Success";
+    
+    location.floor = @1;
+    location.block = @"N";
+    location.x = @28.231565;
+    location.y = @117.52723;
+    
+    return location;
 }
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{

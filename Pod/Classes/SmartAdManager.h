@@ -35,5 +35,6 @@
 - (void)setUserToken:(NSString *)token;
 
 - (void)goToLink;
+- (SADLocationEvent*) currentLocation;
 
 @end

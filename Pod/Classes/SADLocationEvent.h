@@ -10,4 +10,11 @@
 
 @interface SADLocationEvent : SADEvent
 
+@property (nonatomic, strong) NSNumber *x;
+@property (nonatomic, strong) NSNumber *y;
+@property (nonatomic, strong) NSNumber *heading;
+@property (nonatomic, strong) NSString *block;
+@property (nonatomic, strong) NSNumber *floor;
+
+
 @end

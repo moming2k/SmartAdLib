@@ -9,5 +9,6 @@
 #import "SADLocationEvent.h"
 
 @implementation SADLocationEvent
+@synthesize x, y, heading, block, floor;
 
 @end
