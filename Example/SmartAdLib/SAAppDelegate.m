@@ -10,7 +10,6 @@
 #import "SmartAdManager.h"
 #import "AFNetworking.h"
 
-
 @implementation SAAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -22,6 +21,13 @@
     // Override point for customization after application launch.
     SmartAdManager *smartAdManager = [SmartAdManager sharedInstance];
     [smartAdManager setAdUnitID:@"ctbcapp01"];
+    
+    SADLocationEvent *location = [[SmartAdManager sharedInstance] currentLocation];
+    NSLog(@"Location status = %@",location.status);
+    NSLog(@"Location message = %@",location.message);
+    NSLog(@"Location block = %@",location.block);
+    NSLog(@"Location x = %f",[location.x floatValue]);
+    NSLog(@"Location y = %f", [location.y floatValue]);
     
     /* prepare for the handle of the local notification if it is not already ask user by other place */
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
@@ -43,6 +49,15 @@ SUBSCRIBE(SADManagerEvent)
     NSLog(@"SADEvent event message = %@",event.message);
 //    self.progressView.progress = event.progress;
 //    self.label.text = [NSString stringWithFormat:@"%0.2f",event.progress];
+}
+
+SUBSCRIBE(SADLocationEvent)
+{
+    NSLog(@"SADLocationEvent event status = %@",event.status);
+    NSLog(@"SADLocationEvent event message = %@",event.message);
+    NSLog(@"SADLocationEvent event block = %@",event.block);
+    NSLog(@"SADLocationEvent event x = %f",[event.x floatValue]);
+    NSLog(@"SADLocationEvent event y = %f", [event.y floatValue]);
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
